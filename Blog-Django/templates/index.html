@@ -1,0 +1,212 @@
+{% extends 'base.html'%}
+{% load static%}
+
+{% block content%}
+    <!-- ***** Preloader Start ***** -->
+    
+    <!-- ***** Preloader End ***** -->
+
+    <!-- Header -->
+    
+<style>
+.pagination {
+  display: inline-block;
+}
+
+.pagination a {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+}
+</style>
+     <!-- Page Content -->
+    <!-- Banner Starts Here -->
+  
+    <div class="main-banner header-text">
+      <div class="container-fluid">
+        <div class="owl-banner owl-carousel">
+          {%if count > 2 %}
+          {%for post in posts2%}
+          
+           <div class="item">
+            <img src="{{post.image.url}}" alt="text" height="300" width="300" alt="">
+            <div class="item-content">
+              <div class="main-content">
+                <div class="meta-category">
+                  <span>{{post.status}}</span>
+                </div>
+                <a href="post/{{post.slug}}"><h4>{{post.title}}</h4></a>
+                <ul class="post-info">
+                  <li><a href="#">{{post.user}}</a></li>
+                  <li><a href="#">{{post.publishing_date}}</a></li>
+                  <li><a href="#">12 Comments</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+            {%endfor%}
+          {%endif%}
+
+        </div>
+      </div>
+    </div>
+    <!-- Banner Ends Here -->
+
+
+    <section class="call-to-action" >
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="main-content">
+              <div class="row">
+                <div class="col-lg-8">
+                  <span>Stand Blog HTML5 Template</span>
+                  <h4>Creative HTML Template For Bloggers!</h4>
+                </div>
+                <div class="col-lg-4">
+                  <div class="main-button">
+                    <a rel="nofollow" href="#" target="_parent">Download Now!</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="blog-posts">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="all-blog-posts">
+              <div class="row">
+              {%for post in posts%}
+                <div class="col-lg-12">
+                  <div class="blog-post">
+                    <div class="blog-thumb">
+                      <img src="{{post.image.url}}" alt="aa">
+                    </div>
+                    <div class="down-content">
+                      <span>{{post.status}}</span>
+                      <a href="/post/{{post.slug}}"><h4>{{post.title}}</h4></a>
+                      <ul class="post-info">
+                        <li><a href="#">{{post.user}}</a></li>
+                        <li><a href="#">{{post.publishing_date}}</a></li>
+                        <li><a href="#">12 Comments</a></li>
+                      </ul>
+                      <p>{{post.content|truncatechars:300}} <a rel="nofollow" href="post/{{post.slug}}" target="_parent">İçeriği Oku</a></p>
+                      <div class="post-options">
+                        <div class="row">
+                          <div class="col-6">
+                            <ul class="post-tags">
+                              <li><i class="fa fa-tags"></i></li>
+                              <li><a href="#">Beauty</a>,</li>
+                              <li><a href="#">Nature</a></li>
+                            </ul>
+                          </div>
+                          <div class="col-6">
+                            <ul class="post-share">
+                              <li><i class="fa fa-share-alt"></i></li>
+                              <li><a href="#">Facebook</a>,</li>
+                              <li><a href="#"> Twitter</a></li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {%endfor%}
+                {%if posts3%}
+                
+                Aradığınız {{q}}  içerik bulunamamaktadır.
+                {%endif%}
+               
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="sidebar">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="sidebar-item search">
+                    <form id="search_form" name="gs" method="GET" action="">
+                      <input type="text" name="q" class="searchText" value="{{ request.GET.q }}" placeholder="type to search..." autocomplete="on">
+                    </form>
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  <div class="sidebar-item recent-posts">
+                    <div class="sidebar-heading">
+                      <h2>Recent Posts</h2>
+                    </div>
+                    <div class="content">
+                      <ul>
+                         {%for post in son%}
+                      <li><a href="/post/{{post.slug}}">
+                          <h5>{{post.title}}</h5>
+                          <span>{{post.publishing_date}}</span>
+                        </a></li>
+                      {%endfor%}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  <div class="sidebar-item categories">
+                    <div class="sidebar-heading">
+                      <h2>Categories</h2>
+                    </div>
+                    <div class="content">
+                      <ul>
+                      {%for kategori in kategoriler%}
+                      
+                        <li><a href="/?k={{kategori.categoryname}}">- {{kategori.categoryname}}</a></li>
+                      {%endfor%}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  <div class="sidebar-item tags">
+                    <div class="sidebar-heading">
+                      <h2>Tag Clouds</h2>
+                    </div>
+                    <div class="content">
+                      <ul>
+                        <li><a href="#">Lifestyle</a></li>
+                        <li><a href="#">Creative</a></li>
+                        <li><a href="#">HTML5</a></li>
+                        <li><a href="#">Inspiration</a></li>
+                        <li><a href="#">Motivation</a></li>
+                        <li><a href="#">PSD</a></li>
+                        <li><a href="#">Responsive</a></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+   <div class="container">
+
+                        {% if posts.has_previous %}
+                        <a href="?page={{ posts.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="pages"><i class="fas fa-chevron-left"></i></a>
+                        {% endif %}
+
+                        <span class="current">
+                            Sayfa {{ posts.number }} of {{ posts.paginator.num_pages }}
+                        </span>
+
+                        {% if posts.has_next %}
+                        <a href="?page={{ posts.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"><span aria-hidden="true">»</span></a>
+                        {% endif %}
+
+{% endblock content%}

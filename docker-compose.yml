@@ -1,0 +1,82 @@
+version: "3.9"
+ 
+volumes:
+  init-db:
+  data-db:
+
+services:
+  myfirstdb:
+    image: mongo:latest
+    restart: always
+    volumes:
+      - ./init-db:/docker-entrypoint-initdb.d
+      - ./data-db:/data/db
+    environment:
+     MONGO_INITDB_DATABASE: blogg
+     MONGO_INITDB_ROOT_USERNAME: admin
+     MONGO_INITDB_ROOT_PASSWORD: pass
+
+    ports:
+      - 8384:27017
+    container_name: myfirstdb
+
+  web:
+    image: "myweb"
+    build: .
+    restart: always
+    container_name: web
+    volumes:
+      - .:/blogg
+    ports:
+      - 8000:8000
+    environment:
+     DJANGO_SUPERUSER_PASSWORD: mypass
+     DJANGO_SITE: "Web"
+    command: bash -c "python3.8 ./manage.py runserver 0.0.0.0:8000 --nostatic"
+    links:
+      - myfirstdb
+    depends_on:
+      - make_settings
+
+  web2:
+    build: .
+    image: "myweb"
+    restart: always
+    container_name: web2
+    volumes:
+      - .:/blogg
+    ports:
+      - 8001:8000
+    environment:
+      DJANGO_SITE: "Web2"
+    command: bash -c "python3.8 ./manage.py runserver 0.0.0.0:8000 --nostatic"
+    links:
+      - myfirstdb
+    depends_on:
+      - make_settings
+
+      
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    links:
+      - web
+      - web2
+    depends_on:
+      - web
+    volumes:
+      - ./default.conf:/etc/nginx/nginx.conf
+    ports:
+      - '8080:80'
+      
+  make_settings:
+    build: .
+    image: "make_settings"
+    container_name: make_settings
+    command: bash -c "python3.8 manage.py makemigrations blog blogadmin && python3.8 manage.py migrate && python manage.py createsuperuser --noinput --ad adim --username root --soyad soyadim --yas 25"
+    volumes:
+      - .:/blogg
+    links:
+      - myfirstdb
+    depends_on:
+      - myfirstdb

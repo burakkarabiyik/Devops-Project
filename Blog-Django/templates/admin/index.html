@@ -1,0 +1,115 @@
+{% extends './base.html'%}
+{% load static%}
+
+{% block content%}
+<script
+  src="{%static 'admin/js/jquery-3.6.0.min.js'%}"
+  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+  crossorigin="anonymous"></script>
+<script>
+$(document).ready(function(){
+var ctx = document.getElementById("pieChart").getContext("2d");
+
+const data = {
+  labels: {{ kategoriler|safe }},
+  datasets: [{
+    label: 'My First Dataset',
+    data: {{ degerler|safe }},
+    backgroundColor: [
+      'rgb(255, 99, 132)',
+      'rgb(54, 162, 235)',
+      'rgb(255, 205, 86)'
+    ],
+    hoverOffset: 4
+  }]
+};
+const config = {
+  type: 'doughnut',
+  data: data,
+};
+
+var myPie = new Chart(ctx, config);
+})
+
+</script>
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <p class="text-white mt-5 mb-5">Welcome back, <b>{{request.user.ad}}</b></p>
+                </div>
+            </div>
+            <!-- row -->
+            <div class="row tm-content-row">
+                <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col">
+                    <div class="tm-bg-primary-dark tm-block">
+                        <h2 class="tm-block-title">Latest Hits</h2>
+                        <canvas id="lineChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col">
+                    <div class="tm-bg-primary-dark tm-block">
+                        <h2 class="tm-block-title">Performance</h2>
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col">
+                    <div class="tm-bg-primary-dark tm-block tm-block-taller">
+                        <h2 class="tm-block-title">Kategorilere göre Makale Sayısı</h2>
+                        <div id="pieChartContainer" >
+                            <canvas id="pieChart"  width="500" height="300"></canvas>
+                        </div>                        
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col">
+                    <div class="tm-bg-primary-dark tm-block tm-block-taller tm-block-overflow">
+                        <h2 class="tm-block-title">Son Makaleler</h2>
+                        <div class="tm-notification-items">
+                           {%for makale in makaleler%}
+                             <div class="media tm-notification-item">
+                                <div class="tm-gray-circle"><img src="{{makale.image.url}}" style="height:100%;width:100%" alt="Avatar Image" class="rounded-circle"></div>
+                                <div class="media-body">
+                                    <p class="mb-2">Yazar<b> {{makale.user.ad}}</b> {{makale.title}} adlı  bir makale oluşturdu <a href="/post/{{makale.slug}}"
+                                            class="tm-notification-link">post</a>.</p>
+                                    <span class="tm-small tm-text-color-secondary">{{makale.publishing_date}}</span>
+                                </div>
+                            </div>
+                            {%endfor%}
+                        </div>
+                    </div>
+                </div>
+                       {%if request.user.is_admin %}
+                <div class="col-12 tm-block-col">
+                    <div class="tm-bg-primary-dark tm-block tm-block-taller tm-block-scroll">
+                        <h2 class="tm-block-title">Üye Listesi</h2>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">UserName</th>
+                                    <th scope="col">AD</th>
+                                    <th scope="col">Soyad</th>
+                                    <th scope="col">Yaş</th>
+                                    <th scope="col">Yazar</th>
+                                    <th scope="col">Admin</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {%for user in UserList%}
+                                <tr>
+
+                                    <th scope="row"><b>{{user.username}}</b></th>
+                                    <td><b>{{user.ad}}</b></td>
+                                    <td><b>{{user.soyad}}</b></td>
+                                    <td><b>{{user.yas}}</b></td>
+                                    <td>{{user.is_yazar}}</td>
+                                    <td>{{user.is_admin}}</td>
+                                </tr>
+                                {%endfor%}
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {%endif%}
+            </div>
+        </div>
+{% endblock content%}

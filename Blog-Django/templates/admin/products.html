@@ -1,0 +1,101 @@
+{%extends './base.html'%}
+{%load static%}
+
+    
+{% block content%}
+    <div class="container mt-5">
+      <div class="row tm-content-row">
+        <div class="col-sm-12 col-md-12 col-lg-8 col-xl-8 tm-block-col">
+          <div class="tm-bg-primary-dark tm-block tm-block-products">
+          <form action="/admin/deletemakale/" id="sil" method="post" class="tm-login-form" >
+         {% csrf_token %}
+            <div class="tm-product-table-container">
+              <table class="table table-hover tm-table-small tm-product-table">
+                <thead>
+                  <tr>
+                    <th scope="col">&nbsp;</th>
+                    <th scope="col">Makale Başlık</th>
+                    <th scope="col">Yazar</th>
+                    <th scope="col">Kategori</th>
+                    <th scope="col">Yazı Tarihi</th>
+                    <th scope="col">&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                
+                  {% for product in makaleler%}
+                  
+                  <tr >
+                    <th scope="row"><input id='{{product.slug}}' name='{{product.slug}}' type="checkbox" /></th>
+                    <td class="tm-product-name" onclick="location.href='{% url 'edit' value=product.slug %}'">{{product.title}}</td>
+                    <td onclick="location.href='{% url 'edit' value=product.slug %}'">{{product.user}}</td>
+                    <td onclick="location.href='{% url 'edit' value=product.slug %}'">{{product.status}}</td>
+                    <td onclick="location.href='{% url 'edit' value=product.slug %}'">{{product.publishing_date}}</td>
+                    <td>
+                      <a  onclick="makalesil('{{product.slug}}')" class="tm-product-delete-link">
+                        <i class="far fa-trash-alt tm-product-delete-icon"></i>
+                      </a>
+                    </td>
+                  </tr>
+                  
+                  {%endfor%}
+                </tbody>
+              </table>
+            </div>
+          <a
+              href="/admin/addarticle"
+              class="btn btn-primary btn-block text-uppercase mb-3">Yeni Makale Ekle</a>
+            <button  class="btn btn-primary btn-block text-uppercase">
+              Seçilen Makaleleri sil
+            </button>
+          <form>
+            <!-- table container -->
+            
+          </div>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-4 col-xl-4 tm-block-col" >
+          <div style="width:100%"class="tm-bg-primary-dark tm-block tm-block-product-categories">
+            <h2 class="tm-block-title">Kategoriler</h2>
+            <div class="tm-product-table-container">
+              <table class="table tm-table-small tm-product-table">
+                <tbody>
+                {%for kategori in kategoriler%}
+                  <tr >
+                    <td class="tm-product-name">{{kategori.categoryname}}</td>
+                    <td class="text-center">
+                      <a href="#" onclick="location.href='{% url 'deletecategory' categoryname=kategori.categoryname %}'" name="{{kategori.categoryname}}" class="tm-product-delete-link">
+                        <i class="far fa-trash-alt tm-product-delete-icon"></i>
+                      </a>
+                    </td>
+                  </tr>
+                  {%endfor%}
+                </tbody>
+              </table>
+            </div>
+            <!-- table container -->
+            <a onclick="window.location.href='/admin/addcategory/'" style="color:white" class="btn btn-primary btn-block text-uppercase mb-3">
+              Add new category
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <script src="/static/admin/js/jquery-3.3.1.min.js"></script>
+    <!-- https://jquery.com/download/ -->
+    <script src="/static/admin/js/moment.min.js"></script>
+    <!-- https://momentjs.com/ -->
+    <script src="/static/admin/js/Chart.min.js"></script>
+    <!-- http://www.chartjs.org/docs/latest/ -->
+    <script src="/static/admin/js/bootstrap.min.js"></script>
+    <!-- https://getbootstrap.com/ -->
+    <script src="/static/admin/js/tooplate-scripts.js"></script>
+<script>
+function makalesil(value)
+{
+  document.getElementById(value).checked=true;
+  document.getElementById("sil").submit();
+  
+}
+</script>
+{% endblock content%}

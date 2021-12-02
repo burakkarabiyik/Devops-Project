@@ -1,0 +1,155 @@
+{%extends './base.html'%}
+{%load static%}
+{%block content%}
+<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+
+
+    <script src="{% static 'admin/js/jquery-3.3.1.min.js'%}"></script>
+    <!-- https://jquery.com/download/ -->
+    <script src="{% static 'admin/js/moment.min.js'%}"></script>
+    <!-- https://momentjs.com/ -->
+    <script src="{% static 'admin/js/Chart.min.js'%}"></script>
+    <!-- http://www.chartjs.org/docs/latest/ -->
+    <script src="{% static 'admin/js/bootstrap.min.js'%}"></script>
+    <!-- https://getbootstrap.com/ -->
+    <script src="{% static 'admin/js/tooplate-scripts.js'%}"></script>
+<script>
+ 
+function get(value)
+{
+  data=value
+  {%for kisi in users%}
+  if('{{kisi.username}}'===value)
+  {
+    document.getElementById("name").value='{{kisi.username}}';
+    document.getElementById("name2").value='{{kisi.username}}';
+    document.getElementById("yas").value='{{kisi.yas}}';
+    //document.getElementById("email").value="burak2";
+    document.getElementById("ad").value='{{kisi.ad}}';
+    document.getElementById("soyad").value='{{kisi.soyad}}';
+    if('{{kisi.is_yazar}}'==="True")
+    {
+      document.getElementById("yazar").checked=true
+    }
+    else{
+      document.getElementById("yazar").checked=false
+    }
+    if('{{kisi.is_admin}}'==="True")
+    {
+      document.getElementById("admin").checked=true
+    }
+    else{
+      document.getElementById("admin").checked=false
+    }
+  }
+  {%endfor%}
+
+
+}
+</script>
+      <div class="container mt-5">
+        <div class="">
+          <div class="col-12 tm-block-col">
+            <div class="tm-bg-primary-dark tm-block tm-block-h-auto">
+              <h2 class="tm-block-title">List of Accounts</h2>
+              <p class="text-white">Accounts</p>
+              <select onchange="get(this.value)" class="custom-select">
+                <option value="0">Select account</option>
+                {%for user in users%}
+                <option value="{{user.username}}">{{user.username}}</option>
+                {%endfor%}
+              </select>
+            </div>
+          </div>
+        </div>
+        <!-- row -->
+        <div class=" container ">
+          <div class="tm-block-col ">
+            <div class="tm-bg-primary-dark tm-block tm-block-settings">
+              <h2 class="tm-block-title">Account Settings</h2>
+              <form action="/admin/accounts/" method="POST" class="tm-signup-form row">
+              {% csrf_token %}
+                <div class="form-group col-lg-6">
+                  <label for="name">Username</label>
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    class="form-control validate"
+                  />
+                   <input
+                    id="name2"
+                    name="username"
+                    type="text"
+                    
+                    style="display:none"
+                    class="form-control validate"
+                  />
+                </div>
+                <div  class="form-group col-lg-6">
+                  <label for="email">Yaş</label>
+                  <input
+                    id="yas"
+                    name="yas"
+                    class="form-control validate"
+                  />
+                </div> 
+                <div class="form-group col-lg-6">
+                  <label for="password">Ad</label>
+                  <input
+                    id="ad"
+                    name="ad"
+                    class="form-control validate"
+                  />
+                </div>
+                <div class="form-group col-lg-6">
+                  <label for="password2">Soyad</label>
+                  <input
+                    id="soyad"
+                    name="soyad"
+                    class="form-control validate"
+                  />
+                </div>
+                <div class="form-group col-lg-6">
+                  <label for="phone">admin</label>
+                  <input
+                    id="admin"
+                    name="admin"
+                    type="checkbox"
+                    class="form-control validate"
+                  />
+                </div>
+                 <div class="form-group col-lg-6">
+                  <label for="phone">yazar</label>
+                  <input
+                    id="yazar"
+                    name="yazar"
+                    type="checkbox"
+                    class="form-control validate"
+                  />
+                </div>
+                <div class="form-group col-lg-12">
+                  <label class="tm-hide-sm">&nbsp;</label>
+                  <button
+                    type="submit"
+                    class="btn btn-primary btn-block text-uppercase"
+                  >
+                    Update Your Profile
+                  </button>
+                </div>
+                <div class="col-12">
+                  <button
+                    type="submit"
+                    name="username2"
+                    value='{{user.username}}'
+                    class="btn btn-primary btn-block text-uppercase"
+                  >
+                    Delete This Account
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+{%endblock content%}
