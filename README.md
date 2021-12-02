@@ -1,6 +1,6 @@
 # Devops Project
 
-##Setup
+## Setup
 - docker-compose up -d --build
 
 ## What i use here
