@@ -15,7 +15,6 @@ services:
      MONGO_INITDB_DATABASE: blogg
      MONGO_INITDB_ROOT_USERNAME: admin
      MONGO_INITDB_ROOT_PASSWORD: pass
-
     ports:
       - 8384:27017
     container_name: myfirstdb
@@ -30,7 +29,6 @@ services:
     ports:
       - 8000:8000
     environment:
-     DJANGO_SUPERUSER_PASSWORD: mypass
      DJANGO_SITE: "Web"
     command: bash -c "python3.8 ./manage.py runserver 0.0.0.0:8000 --nostatic"
     links:
@@ -73,6 +71,8 @@ services:
     build: .
     image: "make_settings"
     container_name: make_settings
+    environment:
+     DJANGO_SUPERUSER_PASSWORD: mypass
     command: bash -c "python3.8 manage.py makemigrations blog blogadmin && python3.8 manage.py migrate && python manage.py createsuperuser --noinput --ad adim --username root --soyad soyadim --yas 25"
     volumes:
       - .:/blogg
