@@ -34,7 +34,7 @@
 ### Django website link [here](https://github.com/burakkarabiyik/Blog-Django "here")
 ------------
 #### Version 1.1
-####### Nginx Web + 2 Web Server + Nginx DB + 1 Mongo Db working
+##### > Nginx Web + 2 Web Server + Nginx DB + 1 Mongo Db working
 #### Version 1.2
 ##### > 3 Mongo DB Cluster is working well
 ##### > I added Redis cache
