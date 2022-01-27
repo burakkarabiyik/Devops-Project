@@ -82,7 +82,7 @@ DATABASES = {
         'ENGINE': 'djongo',
         'NAME': 'blogg',
         'CLIENT': {
-            'host': "mongodb://admin:pass@myfirstdb",
+            'host': "mongodb://root:password@nginx-db",
 
         }
     }
@@ -107,7 +107,15 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://myredis:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 

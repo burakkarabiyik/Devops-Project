@@ -4,12 +4,14 @@ from blog.models import MyCategories, Post
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponseNotFound
 from django.db.models import Q
-import os;
+import os
+from django.core.cache import cache
+
 # Create your views here.
 
 
 def index(request):
-    site=os.environ.get('DJANGO_SITE')
+    site = os.environ.get('DJANGO_SITE')
     context = dict()
     posts = Post.objects.all().order_by('id')
     son = Post.objects.all().order_by('-publishing_date')[:3]
@@ -61,7 +63,15 @@ def postdetails(request, slug):
     context = dict()
     post = get_object_or_404(Post, slug=slug)
     post.save()
-    son = Post.objects.all().order_by('-publishing_date')[:3]
+
+    if cache.get(slug):
+        son = cache.get(slug)
+        print("from cache")
+    else:
+        son = Post.objects.all().order_by('-publishing_date')[:3]
+        cache.set(slug, son)
+        print("from web")
+
     context["posts"] = post
     context["son"] = son
     return render(request, 'post-details.html', context)

@@ -34,15 +34,15 @@ def login(request):
 
     if request.user.is_authenticated:
         return redirect('/')
-    username = request.POST.get('username')
-    password = request.POST.get('password')
     if(request.POST):
-        user = auth.authenticate(username=username, password=password)
+        username = request.POST['username']
+        password = request.POST['password']
+        user = auth.authenticate(request, username=username, password=password)
         if user is not None:
             auth.login(request, user)
             return redirect('/admin/')
         else:
-            pass
+            print("hata")
     return render(request, 'admin/login.html')
 
 

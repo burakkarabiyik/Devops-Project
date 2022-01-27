@@ -1,23 +1,92 @@
 version: "3.9"
- 
+networks:
+  my-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.10.99.0/24
 volumes:
   init-db:
-  data-db:
+  data-db-0:
+  data-db-1:
+  data-db-2:
+  db-mongo-keys:
 
 services:
-  myfirstdb:
+    
+  mydb-0:
     image: mongo:latest
     restart: always
     volumes:
-      - ./init-db:/docker-entrypoint-initdb.d
-      - ./data-db:/data/db
-    environment:
-     MONGO_INITDB_DATABASE: blogg
-     MONGO_INITDB_ROOT_USERNAME: admin
-     MONGO_INITDB_ROOT_PASSWORD: pass
+      - ./data-db-0:/data/db
+      - ./mongo.sh:/tmp/mongo.sh
+    env_file:
+      ./mongod.env
     ports:
       - 8384:27017
-    container_name: myfirstdb
+    container_name: mydb-0
+    hostname: mydb-0
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "mydb-replica-set" ]
+    links: 
+      - mydb-1
+      - mydb-2
+    networks:
+      - my-network
+    healthcheck:
+      test: cp /tmp/mongo.sh /mongo.sh &&sed -i -e 's/\r$$//' /mongo.sh && sh ./mongo.sh&&exit 0
+      interval: 30s
+      timeout: 150s
+      start_period: 10s
+
+  mydb-1:
+    image: mongo:latest
+    restart: always
+    volumes:
+      - ./data-db-1:/data/db
+    env_file:
+      ./mongod.env
+    ports:
+      - 8385:27017
+    container_name: mydb-1
+    hostname: mydb-1
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "mydb-replica-set" ]
+    networks:
+      - my-network
+    healthcheck:
+      test: exit 0
+      interval: 10s
+      start_period: 10s
+
+  mydb-2:
+    image: mongo:latest
+    restart: always
+    volumes:
+      - ./data-db-2:/data/db
+    env_file:
+      ./mongod.env
+    ports:
+      - 8386:27017
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "mydb-replica-set" ]
+    container_name: mydb-2
+    hostname: mydb-2
+    networks:
+      - my-network
+    healthcheck:
+      test: exit 0
+      interval: 10s
+      start_period: 10s
+
+ 
+  myredis:
+    image: "redis:latest"
+    container_name: myredis
+    ports:
+     - "8686:6379"
+    depends_on:
+      - make_settings
+    networks:
+      - my-network
 
   web:
     image: "myweb"
@@ -32,9 +101,13 @@ services:
      DJANGO_SITE: "Web"
     command: bash -c "python3.8 ./manage.py runserver 0.0.0.0:8000 --nostatic"
     links:
-      - myfirstdb
+      - mydb-0
+      - myredis
     depends_on:
       - make_settings
+    networks:
+      - my-network
+      
 
   web2:
     build: .
@@ -49,24 +122,46 @@ services:
       DJANGO_SITE: "Web2"
     command: bash -c "python3.8 ./manage.py runserver 0.0.0.0:8000 --nostatic"
     links:
-      - myfirstdb
+      - mydb-0
+      - myredis
     depends_on:
       - make_settings
+    networks:
+      - my-network
 
       
-  nginx:
+  nginx-web:
     image: nginx:latest
-    container_name: nginx
+    container_name: nginx-web
     links:
       - web
       - web2
-    depends_on:
-      - web
     volumes:
-      - ./default.conf:/etc/nginx/nginx.conf
+      - ./default-web.conf:/etc/nginx/nginx.conf
     ports:
       - '8080:80'
-      
+    networks:
+      - my-network
+
+  nginx-db:
+    image: nginx:latest
+    container_name: nginx-db
+    links:
+      - mydb-0
+      - mydb-1
+      - mydb-2
+    depends_on:
+      mydb-0:
+         condition: service_healthy
+    volumes:
+      - ./default-db.conf:/etc/nginx/nginx.conf
+    ports:
+      - '8081:27017'
+    networks:
+      - my-network
+  
+  
+
   make_settings:
     build: .
     image: "make_settings"
@@ -77,6 +172,8 @@ services:
     volumes:
       - .:/blogg
     links:
-      - myfirstdb
+      - nginx-db
     depends_on:
-      - myfirstdb
+      - nginx-db
+    networks:
+      - my-network
